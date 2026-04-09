@@ -1,8 +1,15 @@
 # Módulo inicial de procesamiento de ventas
 
 def mostrar_informacion(lista):
-    """Recorre la lista y devuelve el resumen de ventas y devoluciones."""
+    """Une la información de ventas y devoluciones válidas."""
     resultado = []
+    resultado += procesar_ventas(lista)
+    resultado += procesar_devoluciones(lista)
+    return resultado
+
+
+def procesar_ventas(lista):
+    ventas = []
 
     for registro in lista:
         if registro['tipo'] == 'venta' and registro['monto'] > 0 and registro['estado'] == 'completado':
@@ -12,18 +19,21 @@ def mostrar_informacion(lista):
                 monto_final = registro['monto']
 
             texto = "Cliente: " + registro['nombre'] + " - Total: " + str(monto_final)
-            resultado.append(texto)
+            ventas.append(texto)
 
-            print("Procesando registro de: " + registro['nombre'])
+    return ventas
 
-        elif registro['tipo'] == 'devolucion' and registro['monto'] > 0:
+
+def procesar_devoluciones(lista):
+    devoluciones = []
+
+    for registro in lista:
+        if registro['tipo'] == 'devolucion' and registro['monto'] > 0:
             monto_final = registro['monto'] * -1
             texto = "Cliente: " + registro['nombre'] + " - Retorno: " + str(monto_final)
-            resultado.append(texto)
+            devoluciones.append(texto)
 
-            print("Procesando registro de: " + registro['nombre'])
-
-    return resultado
+    return devoluciones
 
 
 # Datos de prueba para verificar que funciona
