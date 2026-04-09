@@ -1,37 +1,45 @@
 # Módulo inicial de procesamiento de ventas
-
 def mostrar_informacion(lista):
-    """Une la información de ventas y devoluciones válidas."""
+    # Junta en una sola lista la información de ventas y devoluciones
+    informacion_total = procesamiento_venta(lista) + procesamiento_devolucion(lista)
+    return informacion_total
+
+
+def procesamiento_venta(lista):
+    # Guarda aquí los textos de las ventas válidas
     resultado = []
-    resultado += procesar_ventas(lista)
-    resultado += procesar_devoluciones(lista)
+
+    # Recorre todos los registros de la lista
+    for venta in lista:
+        # Comprueba que sea una venta correcta
+        if venta['tipo'] == 'venta' and venta['monto'] > 0 and venta['estado'] == 'completado':
+            # Aplica descuento si la venta es alta o si el cliente es VIP
+            if venta['monto'] > 1000 or (venta['cliente_tipo'] == 'VIP' and venta['monto'] > 500):
+                monto_final = venta['monto'] * 0.9
+            else:
+                monto_final = venta['monto']
+
+            # Prepara el texto final de la venta
+            datos_venta = "Cliente: " + venta['nombre'] + " - Total: " + str(monto_final)
+            resultado.append(datos_venta)
+
     return resultado
 
 
-def procesar_ventas(lista):
-    ventas = []
-
-    for registro in lista:
-        if registro['tipo'] == 'venta' and registro['monto'] > 0 and registro['estado'] == 'completado':
-            if registro['monto'] > 1000 or (registro['cliente_tipo'] == 'VIP' and registro['monto'] > 500):
-                monto_final = registro['monto'] * 0.9
-            else:
-                monto_final = registro['monto']
-
-            texto = "Cliente: " + registro['nombre'] + " - Total: " + str(monto_final)
-            ventas.append(texto)
-
-    return ventas
-
-
-def procesar_devoluciones(lista):
+def procesamiento_devolucion(lista):
+    # Guarda aquí los textos de las devoluciones válidas
     devoluciones = []
 
-    for registro in lista:
-        if registro['tipo'] == 'devolucion' and registro['monto'] > 0:
-            monto_final = registro['monto'] * -1
-            texto = "Cliente: " + registro['nombre'] + " - Retorno: " + str(monto_final)
-            devoluciones.append(texto)
+    # Recorre todos los registros de la lista
+    for devolucion in lista:
+        # Comprueba que sea una devolución correcta
+        if devolucion['tipo'] == 'devolucion' and devolucion['monto'] > 0:
+            # La devolución se muestra como cantidad negativa
+            precio_devolver = devolucion['monto'] * -1
+
+            # Prepara el texto final de la devolución
+            datos_devolucion = "Cliente: " + devolucion['nombre'] + " - Retorno: " + str(precio_devolver)
+            devoluciones.append(datos_devolucion)
 
     return devoluciones
 
@@ -43,4 +51,5 @@ informacion_venta = [
     {'tipo': 'devolucion', 'monto': 50, 'estado': 'completado', 'cliente_tipo': 'estándar', 'nombre': 'Pedro'}
 ]
 
+# Muestra el resultado final por pantalla
 print(mostrar_informacion(informacion_venta))
